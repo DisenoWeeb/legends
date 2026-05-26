@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tilcara Legends II · Finanzas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold: #D4A843;
+      --gold-light: #F0C96A;
+      --gold-dim: #8A6A20;
+      --ink: #0D0D0D;
+      --surface: #121212;
+      --surface2: #1A1A1A;
+      --surface3: #222222;
+      --border: rgba(212,168,67,0.2);
+      --green: #4CAF82;
+      --red: #E05C5C;
+      --text: #E8E0D0;
+      --muted: #7A7060;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--ink);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* NOISE TEXTURE */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* DIAGONAL ACCENT */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      right: -10%;
+      width: 55%;
+      height: 140%;
+      background: linear-gradient(135deg, transparent 40%, rgba(212,168,67,0.03) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 60px 0 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: fadeDown 0.7s ease both;
+    }
+
+    .eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 10vw, 96px);
+      line-height: 0.9;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+
+    header h1 span { color: var(--gold); }
+
+    .subtitle {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    /* ── KPI CARDS ── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin: 40px 0;
+      animation: fadeUp 0.7s 0.15s ease both;
+    }
+
+    .kpi {
+      background: var(--surface2);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .kpi.income::before { background: var(--green); }
+    .kpi.expense::before { background: var(--red); }
+    .kpi.balance::before { background: var(--gold); }
+
+    .kpi-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(26px, 4vw, 40px);
+      letter-spacing: 0.02em;
+      line-height: 1;
+    }
+    .kpi.income .kpi-value { color: var(--green); }
+    .kpi.expense .kpi-value { color: var(--red); }
+    .kpi.balance .kpi-value { color: var(--gold); }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 48px 0 20px;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .section-head h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      color: #fff;
+    }
+    .section-head .pill {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 2px;
+    }
+    .pill.green { background: rgba(76,175,130,0.15); color: var(--green); }
+    .pill.red   { background: rgba(224,92,92,0.15);  color: var(--red); }
+
+    /* ── BAR TABLE ── */
+    .bar-table { display: flex; flex-direction: column; gap: 2px; }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 130px;
+      align-items: center;
+      gap: 16px;
+      background: var(--surface2);
+      padding: 12px 18px;
+      transition: background 0.2s;
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+    .bar-row:hover { background: var(--surface3); }
+
+    .bar-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .bar-track {
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 1px;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .income-rows .bar-fill { background: linear-gradient(90deg, #2D7A58, var(--green)); }
+    .expense-rows .bar-fill { background: linear-gradient(90deg, #8B2020, var(--red)); }
+
+    .bar-amount {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .income-rows .bar-amount { color: var(--green); }
+    .expense-rows .bar-amount { color: var(--red); }
+
+    /* ── TOTAL BAR ── */
+    .total-strip {
+      margin-top: 2px;
+      background: var(--surface3);
+      border-top: 1px solid var(--border);
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeUp 0.7s 0.6s ease both;
+    }
+
+    .total-strip .label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .total-strip .value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+    }
+
+    /* ── DONUT CHART ── */
+    .visual-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 48px;
+      animation: fadeUp 0.7s 0.45s ease both;
+    }
+
+    .chart-box {
+      background: var(--surface2);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .chart-box h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .donut-wrap svg { flex-shrink: 0; }
+
+    .legend { display: flex; flex-direction: column; gap: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 9px; }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+    }
+    .legend-pct {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* ── EXPENSE BREAKDOWN ── */
+    .breakdown-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .bd-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--surface2);
+      opacity: 0;
+      transform: translateX(12px);
+    }
+
+    .bd-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+    }
+
+    .bd-bar-wrap {
+      flex: 1;
+      margin: 0 16px;
+      height: 3px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .bd-bar {
+      height: 100%;
+      background: var(--red);
+      width: 0%;
+      transition: width 1s cubic-bezier(0.16,1,0.3,1);
+      opacity: 0.6;
+    }
+
+    .bd-amount {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      color: var(--red);
+      text-align: right;
+      min-width: 120px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeUp 0.7s 0.8s ease both;
+    }
+
+    footer .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+    }
+
+    footer .note {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity:0; transform: translateY(-16px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(16px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    @keyframes rowIn {
+      to { opacity:1; transform: translateX(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .kpi-row { grid-template-columns: 1fr; }
+      .visual-row { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 120px 1fr 100px; gap: 10px; }
+      .donut-wrap { flex-direction: column; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <p class="eyebrow">Resumen Económico · 2do Encuentro</p>
+    <h1>TILCARA<br><span>LEGENDS</span></h1>
+    <p class="subtitle">Balance Ingresos &amp; Egresos · 2025</p>
+  </header>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-row">
+    <div class="kpi income">
+      <p class="kpi-label">Total Ingresos</p>
+      <p class="kpi-value" id="kpi-in">$0</p>
+      <p class="kpi-sub">8 conceptos</p>
+    </div>
+    <div class="kpi expense">
+      <p class="kpi-label">Total Egresos</p>
+      <p class="kpi-value" id="kpi-out">$0</p>
+      <p class="kpi-sub">21 conceptos</p>
+    </div>
+    <div class="kpi balance">
+      <p class="kpi-label">Balance Final</p>
+      <p class="kpi-value" id="kpi-bal">$0</p>
+      <p class="kpi-sub">Superávit</p>
+    </div>
+  </div>
+
+  <!-- INGRESOS -->
+  <div class="section-head">
+    <h2>INGRESOS</h2>
+    <span class="pill green">+$4.572.800</span>
+  </div>
+
+  <div class="bar-table income-rows" id="income-table"></div>
+
+  <!-- EGRESOS -->
+  <div class="section-head" style="animation-delay:0.35s">
+    <h2>EGRESOS</h2>
+    <span class="pill red">−$4.434.848</span>
+  </div>
+
+  <div class="bar-table expense-rows" id="expense-table"></div>
+
+  <!-- TOTAL -->
+  <div class="total-strip">
+    <span class="label">Saldo Final</span>
+    <span class="value">+ $137.952</span>
+  </div>
+
+  <!-- VISUAL ROW -->
+  <div class="visual-row">
+    <!-- Donut -->
+    <div class="chart-box">
+      <h3>Distribución de Ingresos</h3>
+      <div class="donut-wrap">
+        <svg width="120" height="120" viewBox="0 0 120 120" id="donut-svg"></svg>
+        <div class="legend" id="donut-legend"></div>
+      </div>
+    </div>
+
+    <!-- Top Egresos -->
+    <div class="chart-box">
+      <h3>Top Egresos por Concepto</h3>
+      <div class="breakdown-list" id="top-expenses"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo">TILCARA LEGENDS II</div>
+    <p class="note">Datos del 2° Encuentro · Generado automáticamente</p>
+  </footer>
+
+</div>
+
+<script>
+  const fmt = n => '$' + Math.abs(n).toLocaleString('es-AR');
+
+  const income = [
+    { name: 'Tilcara',           amount: 1080000 },
+    { name: 'Lagartos',          amount: 1040000 },
+    { name: 'Duendes',           amount:  812000 },
+    { name: 'Rowing',            amount:  670000 },
+    { name: 'Albatros',          amount:  602000 },
+    { name: 'Querandi',          amount:  176000 },
+    { name: 'Platos al costo',   amount:  145000 },
+    { name: 'Cerveza al costo',  amount:   47800 },
+  ];
+
+  const expenses = [
+    { name: 'Erico',              amount: -2848000 },
+    { name: 'Ambulancia',         amount:  -350000 },
+    { name: 'Seguro',             amount:  -279318 },
+    { name: 'Fernet',             amount:  -234000 },
+    { name: 'Helado',             amount:  -110000 },
+    { name: 'Presentes Vidrios',  amount:  -117000 },
+    { name: 'Salames',            amount:   -81060 },
+    { name: 'Fruta',              amount:   -57000 },
+    { name: 'Arbitro 1',          amount:   -58000 },
+    { name: 'Caños',              amount:   -58400 },
+    { name: 'Arbitro 2',          amount:   -50000 },
+    { name: 'Agua',               amount:   -35000 },
+    { name: 'Presentes',          amount:   -36620 },
+    { name: 'Queso',              amount:   -30000 },
+    { name: 'Fotógrafo',          amount:   -30000 },
+    { name: 'Hielo extra',        amount:   -24000 },
+    { name: 'Coca Extra x6',      amount:   -18750 },
+    { name: 'Vasos',              amount:   -10200 },
+    { name: 'Pan extra',          amount:    -7500 },
+  ];
+
+  const totalIn  = income.reduce((s, r) => s + r.amount, 0);
+  const totalOut = expenses.reduce((s, r) => s + r.amount, 0);
+  const balance  = totalIn + totalOut;
+
+  // ── KPI counter animation
+  function animateCount(el, target, prefix='$', duration=1200) {
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const val = Math.round(ease * target);
+      el.textContent = prefix + Math.abs(val).toLocaleString('es-AR');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  setTimeout(() => {
+    animateCount(document.getElementById('kpi-in'),  totalIn);
+    animateCount(document.getElementById('kpi-out'), totalOut);
+    animateCount(document.getElementById('kpi-bal'), balance);
+  }, 300);
+
+  // ── Bar rows
+  function buildBarRows(data, containerId, maxAbs) {
+    const container = document.getElementById(containerId);
+    data.forEach((item, i) => {
+      const pct = (Math.abs(item.amount) / maxAbs * 100).toFixed(1);
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.style.animationDelay = (0.05 * i + 0.3) + 's';
+      row.innerHTML = `
+        <span class="bar-name">${item.name}</span>
+        <div class="bar-track"><div class="bar-fill" data-pct="${pct}"></div></div>
+        <span class="bar-amount">${fmt(item.amount)}</span>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  buildBarRows(income,   'income-table',  Math.max(...income.map(r=>r.amount)));
+  buildBarRows(expenses, 'expense-table', Math.max(...expenses.map(r=>Math.abs(r.amount))));
+
+  // Animate bars on scroll / load
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        el.style.animation = 'rowIn 0.5s ease forwards';
+        const fill = el.querySelector('.bar-fill');
+        if (fill) setTimeout(() => fill.style.width = fill.dataset.pct + '%', 100);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.bar-row').forEach(r => observer.observe(r));
+
+  // ── Donut chart
+  const colors = ['#4CAF82','#6DD4A2','#3A9E70','#2D7A58','#8FE6B8','#1F5C40','#B7F0D4','#5EC897'];
+  const cx = 60, cy = 60, r = 48, inner = 30;
+  const total = income.reduce((s,i) => s + i.amount, 0);
+  let angle = -Math.PI / 2;
+  const svg = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+
+  income.forEach((item, i) => {
+    const slice = (item.amount / total) * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(angle);
+    const y1 = cy + r * Math.sin(angle);
+    angle += slice;
+    const x2 = cx + r * Math.cos(angle);
+    const y2 = cy + r * Math.sin(angle);
+    const xi1 = cx + inner * Math.cos(angle - slice);
+    const yi1 = cy + inner * Math.sin(angle - slice);
+    const xi2 = cx + inner * Math.cos(angle);
+    const yi2 = cy + inner * Math.sin(angle);
+    const large = slice > Math.PI ? 1 : 0;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${xi2},${yi2} A${inner},${inner} 0 ${large},0 ${xi1},${yi1} Z`);
+    path.setAttribute('fill', colors[i % colors.length]);
+    path.setAttribute('opacity', '0.9');
+    svg.appendChild(path);
+
+    // legend (show top 5)
+    if (i < 6) {
+      const pct = ((item.amount / total) * 100).toFixed(0);
+      legend.innerHTML += `
+        <div class="legend-item">
+          <div class="legend-dot" style="background:${colors[i]}"></div>
+          <span class="legend-text">${item.name}</span>
+          <span class="legend-pct">${pct}%</span>
+        </div>`;
+    }
+  });
+
+  // ── Top expenses
+  const sorted = [...expenses].sort((a,b) => a.amount - b.amount).slice(0, 7);
+  const maxExp = Math.abs(sorted[0].amount);
+  const topEl = document.getElementById('top-expenses');
+
+  sorted.forEach((item, i) => {
+    const pct = (Math.abs(item.amount) / maxExp * 100).toFixed(1);
+    const div = document.createElement('div');
+    div.className = 'bd-item';
+    div.style.animationDelay = (0.05 * i + 0.5) + 's';
+    div.innerHTML = `
+      <span class="bd-name">${item.name}</span>
+      <div class="bd-bar-wrap"><div class="bd-bar" data-pct="${pct}"></div></div>
+      <span class="bd-amount">${fmt(item.amount)}</span>
+    `;
+    topEl.appendChild(div);
+  });
+
+  const obs2 = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.animation = 'rowIn 0.5s ease forwards';
+        const bar = e.target.querySelector('.bd-bar');
+        if (bar) setTimeout(() => bar.style.width = bar.dataset.pct + '%', 100);
+        obs2.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.bd-item').forEach(r => obs2.observe(r));
+</script>
+</body>
+</html>
